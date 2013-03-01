@@ -44,22 +44,20 @@ public class RequestConstants {
     public static final String TOKEN_ID = "${id}";
     public static final String TOKEN_ORDER_ID = "${orderId}";
     public static final String TOKEN_METHOD = "${method}";
-    public static final String TOKEN_APP_KEY = "${appKey}";
     public static final String TOKEN_RESET = "${reset}";
     public static final String TOKEN_SKU = "${sku}";
-
-    public static final String BASE_URL = "http://" + TOKEN_APP_KEY + ".fetchapp.com/api/v2/" + TOKEN_METHOD;
-    public static final String[] BASE_URL_SEARCH = {TOKEN_APP_KEY, TOKEN_METHOD};
+    public static final String BASE_URL = "http://app.fetchapp.com/api/v2/" + TOKEN_METHOD;
 
     public static String generateAuthorizationKey(final String apiKey, final String apiToken) {
         return "Basic " + Base64.encodeBase64String((apiKey + ":" + apiToken).getBytes());
     }
 
-    public static String generateRequestUrl(final String appKey, final String method) {
-        return StringUtils.replaceEach(BASE_URL, BASE_URL_SEARCH, new String[] {appKey, method});
+    public static String generateRequestUrl(final String method) {
+        return StringUtils.replace(BASE_URL, TOKEN_METHOD, method);
     }
 
 
+    // ----- ACCOUNT ---------------------------------------------------------------------------------------------------
     public static final class Account {
 
         public static final String METHOD_INFORMATION = "account";
@@ -67,6 +65,21 @@ public class RequestConstants {
     }
 
 
+    // ----- DOWNLOADS -------------------------------------------------------------------------------------------------
+    public static final class Downloads {
+
+        public static final String METHOD_DOWNLOADS = "downloads";
+    }
+
+
+    // ----- FILES -----------------------------------------------------------------------------------------------------
+    public static final class Files {
+
+        public static final String METHOD_FILES = "files";
+    }
+
+
+    // ----- ORDERS ----------------------------------------------------------------------------------------------------
     public static final class Orders {
 
         private static final String METHOD_ORDER = "orders/" + TOKEN_ID;
@@ -123,6 +136,7 @@ public class RequestConstants {
     }
 
 
+    // ----- ORDER ITEMS -----------------------------------------------------------------------------------------------
     public static final class OrderItems {
 
         private static final String METHOD_ORDER_ITEMS = "orders/" + TOKEN_ID + "/order_items";
@@ -165,6 +179,7 @@ public class RequestConstants {
     }
 
 
+    // ----- PRODUCTS --------------------------------------------------------------------------------------------------
     public static final class Products {
 
         private static final String METHOD_PRODUCT = "products/" + TOKEN_SKU;

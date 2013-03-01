@@ -21,19 +21,23 @@
 
 package com.nicohuysamen.fetchapp.dto;
 
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  *
  */
-
 @XmlRootElement(name = "products")
 public class Products {
 
+    @XmlAttribute
+    private static final String type = "array";
+
     @XmlElement(name = "product")
-    private List<Product> products;
+    private List<Product> products = new ArrayList<Product>();
 
     public List<Product> getProducts() {
         return products;

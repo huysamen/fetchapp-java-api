@@ -1,5 +1,5 @@
 /*
-* File.java
+* OrderItemFile.java
 *
 * Copyright (c) 2013, Nicolaas Frederick Huysamen. All rights reserved.
 *
@@ -31,67 +31,67 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement(name = "file")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class File {
-
-    @XmlElement(name = "id")
-    private String id;
+public class OrderItemFile {
 
     @XmlElement(name = "filename")
     private String filename;
 
-    @XmlElement(name = "size_bytes")
-    private int sizeInBytes;
+    @XmlElement(name = "guid")
+    private String guid;
 
-    @XmlElement(name = "content_type")
-    private String contentType;
+    @XmlElement(name = "download_count")
+    private int downloadCount;
 
-    @XmlElement(name = "permalink")
-    private String permalink;
+    @XmlElement(name = "link")
+    private String link;
 
-    @XmlElement(name = "url", nillable = true)
-    private String url;
+    @XmlElement(name = "downloads_remaining")
+    private int downloadsRemaining;
 
     @XmlElement(name = "type")
     private String type;
 
-    public String getId() {
-        return id;
-    }
+    @XmlElement(name = "downloads")
+    private Downloads downloads;
 
     public String getFilename() {
         return filename;
     }
 
-    public int getSizeInBytes() {
-        return sizeInBytes;
+    public String getGuid() {
+        return guid;
     }
 
-    public String getContentType() {
-        return contentType;
+    public int getDownloadCount() {
+        return downloadCount;
     }
 
-    public String getPermalink() {
-        return permalink;
+    public String getLink() {
+        return link;
     }
 
-    public String getUrl() {
-        return url;
+    public int getDownloadsRemaining() {
+        return downloadsRemaining;
     }
 
     public String getType() {
         return type;
     }
 
+    public Downloads getDownloads() {
+        return downloads;
+    }
+
     @Override
     public String toString() {
-        return "File{" +
-                "id='" + id + '\'' +
-                ", filename='" + filename + '\'' +
-                ", sizeInBytes=" + sizeInBytes +
-                ", contentType='" + contentType + '\'' +
-                ", permalink='" + permalink + '\'' +
-                ", url='" + url + '\'' +
+        return "OrderItemFile{" +
+                "filename='" + filename + '\'' +
+                ", guid='" + guid + '\'' +
+                ", downloadCount=" + downloadCount +
+                ", link='" + link + '\'' +
+                ", downloadsRemaining=" + downloadsRemaining +
                 ", type='" + type + '\'' +
+                ", downloads=" + downloads +
                 '}';
     }
 }

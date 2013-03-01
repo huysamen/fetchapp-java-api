@@ -30,45 +30,224 @@ import java.util.Date;
  */
 public interface FetchApi {
 
-    // ACCOUNT MANAGEMENT
-    //
+    /**
+     * Returns the account information for your FetchApp account.
+     *
+     * @return - Your account information.
+     */
     public Account getAccountInformation();
-    public String newApiToken();
 
+    /**
+     * Returns your new API token in the message.
+     *
+     * @return - Your new API token.
+     */
+    public Message requestNewApiToken();
 
-    // ORDER MANAGEMENT
-    //
+    /**
+     * Returns all the files that have been uploaded your FetchApp account.
+     *
+     * @return - The files uploaded to your FetchApp account.
+     */
+    public Files getFiles();
+
+    /**
+     * Returns all the downloads for your FetchApp account.
+     *
+     * @return - The downloads that have happened on your FetchApp account.
+     */
+    public Downloads getDownloads();
+
+    /**
+     * Returns all orders associated with your FetchApp account.
+     *
+     * @return - All orders associated with your account.
+     */
     public Orders getOrders();
+
+    /**
+     * Returns all open orders.
+     *
+     * @return - All open orders.
+     */
     public Orders getOpenOrders();
+
+    /**
+     * Returns all expired orders.
+     *
+     * @return - All expired orders.
+     */
     public Orders getExpiredOrders();
+
+    /**
+     * Return a specific order.
+     *
+     * @param id - The ID of the order being queried.
+     * @return - The specific order.
+     */
     public Order getOrder(final String id);
-    public Order createOrder(final Order order);
-    public Order updateOrder(final Order order);
+
+    /**
+     * Creates an <code>Order</code> from the data specified in the <code>OrderData</order> class.
+     *
+     * @param order - The new order data.
+     * @return - The newly created order.
+     */
+    public Order createOrder(final OrderData order);
+
+    /**
+     * Updates an existing order with the information in the order data object.
+     *
+     * @param order - The order data to update the existing order with.
+     * @return - The updated order.
+     */
+    public Order updateOrder(final OrderData order);
+
+    /**
+     * Deletes a specific order.
+     *
+     * @param id - The ID of the order to delete.
+     * @return - A message with 'Ok.' if successful.
+     */
     public Message deleteOrder(final String id);
-    public Downloads orderDownloads(final String id);
+
+    /**
+     * Returns all the downloads for a specific order.
+     *
+     * @param id - The ID of the order whose downloads are requested.
+     * @return - The downloads of the order.
+     */
+    public Downloads getOrderDownloads(final String id);
+
+    /**
+     * Expire an existing order.
+     *
+     * @param id - The ID of the order to expire.
+     * @return - A message with 'Ok.' if successful.
+     */
     public Message expireOrder(final String id);
+
+    /**
+     * Resend the order e-mail for a specific order.
+     *
+     * @param id - The ID of the order which e-mail must be sent again.
+     * @param resetExpiration - Flag to indicate if the expiration should be removed or not.
+     * @return - A message with 'Ok.' if successful.
+     */
     public Message sendOrderEmail(final String id, final boolean resetExpiration);
+
+    /**
+     * Resend the order e-mail for a specific order, and set a new expiration date.
+     *
+     * @param id - The ID of the order which e-mail must be sent again.
+     * @param expirationDate - The date when the order should expire.
+     * @return - A message with 'Ok.' if successful.
+     */
     public Message sendOrderEmail(final String id, final Date expirationDate);
-    public Order getOrderStatistics(final String id);
 
+    /**
+     * Get some statistics for a specific order.
+     *
+     * @param id - The ID of the order which statistics is requested.
+     * @return - The statistics for the order.
+     */
+    public OrderStats getOrderStatistics(final String id);
 
-    // ORDER ITEM MANAGEMENT
-    //
+    /**
+     * Returns all the order items associated with a specific order.
+     *
+     * @param id - The ID of the order for which the order items is requested.
+     * @return - The order items for the order.
+     */
     public OrderItems getOrderItems(final String id);
+
+    /**
+     * Returns a specific order item.
+     *
+     * @param orderId - The ID of the order which the order item belongs to.
+     * @param id - The ID of the order item.
+     * @return - The order item.
+     */
     public OrderItem getOrderItem(final String orderId, final String id);
-    public Files getOrderItemFiles(final String orderId, final String id);
+
+    /**
+     * Returns all the files associated with a specific order item.
+     *
+     * @param orderId - The ID of the order which the order item belongs to.
+     * @param id - The ID of the order item.
+     * @return - The files associated wit the order item.
+     */
+    public OrderItemFiles getOrderItemFiles(final String orderId, final String id);
+
+    /**
+     * Returns all the downloads associated with a specific order item.
+     *
+     * @param orderId - The ID of the order which the order item belongs to.
+     * @param id - The ID of the order item.
+     * @return - The downloads associated wit the order item.
+     */
     public Downloads getOrderItemDownloads(final String orderId, final String id);
-//    public Message expireOrderItem(final String orderId, final String id);
 
-
-    // PRODUCT MANAGEMENT
-    //
+    /**
+     * Returns all the products associated with your FetchApp account.
+     *
+     * @return - All the products.
+     */
     public Products getProducts();
+
+    /**
+     * Returns a specific product.
+     *
+     * @param sku - The SKU of the product.
+     * @return - The Specific product.
+     */
     public Product getProduct(final String sku);
-    public Product createProduct(final Product product);
-    public Product updateProduct(final Product product);
+
+    /**
+     * Create a product from a product data object.
+     *
+     * @param product - The product data from which the product will be created.
+     * @return - The newly created product.
+     */
+    public Product createProduct(final ProductData product);
+
+    /**
+     * Update an existing product from a product data object.
+     *
+     * @param product - The product data object.
+     * @return - The updated product.
+     */
+    public Product updateProduct(final ProductData product);
+
+    /**
+     * Delete a specific product.
+     *
+     * @param sku - The SKU of the product to delete.
+     * @return - A message with 'Ok.' if successful.
+     */
     public Message deleteProduct(final String sku);
-    public Product getProductStatistics(final String sku);
+
+    /**
+     * Get statistics for a specific product.
+     *
+     * @param sku - The SKU of the product to get the statistics for.
+     * @return - The statistics of the product.
+     */
+    public ProductStats getProductStatistics(final String sku);
+
+    /**
+     * Returns all the files associated with a product.
+     *
+     * @param sku - The SKU of the product which files must be fetched.
+     * @return - The files associated with the product.
+     */
     public Files getProductFiles(final String sku);
+
+    /**
+     * Returns all the downloads associated with a product.
+     *
+     * @param sku - The SKU of the product which downloads must be fetched.
+     * @return - The downloads associated with the product.
+     */
     public Downloads getProductDownloads(final String sku);
 }

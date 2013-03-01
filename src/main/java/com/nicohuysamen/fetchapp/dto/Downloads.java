@@ -21,19 +21,22 @@
 
 package com.nicohuysamen.fetchapp.dto;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.*;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  *
  */
-
 @XmlRootElement(name = "downloads")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Downloads {
 
+    @XmlAttribute
+    private static final String type = "array";
+
     @XmlElement(name = "download", nillable = true)
-    private List<Download> downloads;
+    private List<Download> downloads = new ArrayList<Download>();
 
     public List<Download> getDownloads() {
         return downloads;

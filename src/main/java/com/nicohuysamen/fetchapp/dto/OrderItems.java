@@ -21,21 +21,32 @@
 
 package com.nicohuysamen.fetchapp.dto;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.*;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  *
  */
-
 @XmlRootElement(name = "order_items")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class OrderItems {
+
+    @XmlAttribute
+    private static final String type = "array";
 
     @XmlElement(name = "order_item")
     private List<OrderItem> orderItems;
 
     public List<OrderItem> getOrderItems() {
         return orderItems;
+    }
+
+    protected void addOrderItem(final OrderItem orderItem) {
+        if (orderItems == null) {
+            orderItems = new ArrayList<OrderItem>();
+        }
+
+        orderItems.add(orderItem);
     }
 }

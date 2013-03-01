@@ -1,5 +1,5 @@
 /*
-* File.java
+* OrderItem.java
 *
 * Copyright (c) 2013, Nicolaas Frederick Huysamen. All rights reserved.
 *
@@ -29,69 +29,65 @@ import javax.xml.bind.annotation.XmlRootElement;
 /**
  *
  */
-@XmlRootElement(name = "file")
+@XmlRootElement(name = "order_item")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class File {
+public class OrderItemData {
 
     @XmlElement(name = "id")
     private String id;
 
-    @XmlElement(name = "filename")
-    private String filename;
+    @XmlElement(name = "sku")
+    private String sku;
 
-    @XmlElement(name = "size_bytes")
-    private int sizeInBytes;
+    @XmlElement(name = "downloads_remaining")
+    private int downloadsRemaining;
 
-    @XmlElement(name = "content_type")
-    private String contentType;
+    @XmlElement(name = "price")
+    private float price;
 
-    @XmlElement(name = "permalink")
-    private String permalink;
+    public OrderItemData() {}
 
-    @XmlElement(name = "url", nillable = true)
-    private String url;
-
-    @XmlElement(name = "type")
-    private String type;
+    public OrderItemData(final String sku, final int downloadsRemaining, final float price) {
+        this.sku = sku;
+        this.downloadsRemaining = downloadsRemaining;
+        this.price = price;
+    }
 
     public String getId() {
         return id;
     }
 
-    public String getFilename() {
-        return filename;
+    public String getSku() {
+        return sku;
     }
 
-    public int getSizeInBytes() {
-        return sizeInBytes;
+    public void setSku(final String sku) {
+        this.sku = sku;
     }
 
-    public String getContentType() {
-        return contentType;
+    public int getDownloadsRemaining() {
+        return downloadsRemaining;
     }
 
-    public String getPermalink() {
-        return permalink;
+    public void setDownloadsRemaining(final int downloadsRemaining) {
+        this.downloadsRemaining = downloadsRemaining;
     }
 
-    public String getUrl() {
-        return url;
+    public float getPrice() {
+        return price;
     }
 
-    public String getType() {
-        return type;
+    public void setPrice(final float price) {
+        this.price = price;
     }
 
     @Override
     public String toString() {
-        return "File{" +
+        return "OrderItemData{" +
                 "id='" + id + '\'' +
-                ", filename='" + filename + '\'' +
-                ", sizeInBytes=" + sizeInBytes +
-                ", contentType='" + contentType + '\'' +
-                ", permalink='" + permalink + '\'' +
-                ", url='" + url + '\'' +
-                ", type='" + type + '\'' +
+                ", sku='" + sku + '\'' +
+                ", downloadsRemaining=" + downloadsRemaining +
+                ", price=" + price +
                 '}';
     }
 }

@@ -23,7 +23,6 @@ package com.nicohuysamen.fetchapp.impl.jetty.sync;
 
 import com.nicohuysamen.fetchapp.RequestConstants;
 import com.nicohuysamen.fetchapp.dto.Message;
-import com.nicohuysamen.fetchapp.dto.NilClasses;
 import org.eclipse.jetty.client.ContentExchange;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.io.ByteArrayBuffer;
@@ -45,11 +44,9 @@ public class JettySyncRequestEngine {
     private final HttpClient httpClient = new HttpClient();
 
     private String authKey;
-    private String appKey;
 
     public JettySyncRequestEngine(
             final String authKey,
-            final String appKey,
             final int maxConnectionsPerAddress,
             final int connectionQueueSize,
             final int connectionTimeout) throws Exception {
@@ -61,90 +58,65 @@ public class JettySyncRequestEngine {
         httpClient.start();
 
         this.authKey = authKey;
-        this.appKey = appKey;
     }
 
     public void setAuthKey(final String authKey) {
         this.authKey = authKey;
     }
 
-    public void setAppKey(final String appKey) {
-        this.appKey = appKey;
+    public synchronized <R> R sendGetRequest(
+            final Class<R> receiveClass,
+            final String method) {
+
+        return sendRequest(Void.class, receiveClass, RequestConstants.REQUEST_METHOD_GET, method, null);
     }
 
-    public synchronized <T> T sendGetRequest(final Class<T> klass, final String method) {
-        return sendRequest(klass, RequestConstants.REQUEST_METHOD_GET, method);
+    public synchronized <R> R sendDeleteRequest(
+            final Class<R> receiveClass,
+            final String method) {
+
+        return sendRequest(Void.class, receiveClass, RequestConstants.REQUEST_METHOD_DELETE, method, null);
     }
 
-    public synchronized <T> T sendPostRequest(final Class<T> klass, final String method, final Object content) {
-        return sendDataRequest(klass, RequestConstants.REQUEST_METHOD_POST, method, content);
+    public synchronized <S, R> R sendPostRequest(
+            final Class<S> sendClass,
+            final Class<R> receiveClass,
+            final String method,
+            final S content) {
+
+        return sendRequest(sendClass, receiveClass, RequestConstants.REQUEST_METHOD_POST, method, content);
     }
 
-    public synchronized <T> T sendPutRequest(final Class<T> klass, final String method, final Object content) {
-        return sendDataRequest(klass, RequestConstants.REQUEST_METHOD_PUT, method, content);
-    }
+    public synchronized <S, R> R sendPutRequest(
+            final Class<S> sendClass,
+            final Class<R> receiveClass,
+            final String method,
+            final S content) {
 
-    public synchronized <T> T sendDeleteRequest(final Class<T> klass, final String method) {
-        return sendRequest(klass, RequestConstants.REQUEST_METHOD_DELETE, method);
-    }
-
-    @SuppressWarnings("unchecked")
-    private <T> T sendRequest(final Class<T> klass, final String requestMethod, final String method) {
-        try {
-            final JAXBContext context = JAXBContext.newInstance("com.nicohuysamen.fetchapp.dto");
-            final Unmarshaller unmarshaller = context.createUnmarshaller();
-            final ContentExchange exchange = new ContentExchange();
-
-            exchange.setMethod(requestMethod);
-            exchange.setRequestHeader(RequestConstants.REQUEST_HEADER_AUTH, authKey);
-            exchange.setRequestContentType(RequestConstants.REQUEST_CONTENT_XML);
-            exchange.setURL(RequestConstants.generateRequestUrl(appKey, method));
-
-            httpClient.send(exchange);
-            exchange.waitForDone();
-
-            final Object response = unmarshaller.unmarshal(new StringReader(exchange.getResponseContent()));
-
-            if ((response instanceof Message && !klass.equals(Message.class))
-                    || response instanceof NilClasses) {
-
-                // TODO: Log error
-                return null;
-            }
-
-            return (T) response;
-
-        } catch (final JAXBException e) {
-            e.printStackTrace();
-        } catch (final IOException e) {
-            e.printStackTrace();
-        } catch (final InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        return null;
+        return sendRequest(sendClass, receiveClass, RequestConstants.REQUEST_METHOD_PUT, method, content);
     }
 
     @SuppressWarnings("unchecked")
-    private <T> T sendDataRequest(
-            final Class<T> klass,
+    private <S, R> R sendRequest(
+            final Class<S> sendClass,
+            final Class<R> receiveClass,
             final String requestMethod,
             final String method,
-            final Object content) {
+            final S content) {
 
         try {
-            final JAXBContext context = JAXBContext.newInstance("com.nicohuysamen.fetchapp.dto");
-            final Marshaller marshaller = context.createMarshaller();
-            final Unmarshaller unmarshaller = context.createUnmarshaller();
             final ContentExchange exchange = new ContentExchange();
 
             exchange.setMethod(requestMethod);
             exchange.setRequestHeader(RequestConstants.REQUEST_HEADER_AUTH, authKey);
             exchange.setRequestContentType(RequestConstants.REQUEST_CONTENT_XML);
-            exchange.setURL(RequestConstants.generateRequestUrl(appKey, method));
+            exchange.setURL(RequestConstants.generateRequestUrl(method));
 
             if (content != null) {
+                final JAXBContext sendContext = JAXBContext.newInstance(sendClass);
+                final Marshaller marshaller = sendContext.createMarshaller();
                 final StringWriter xml = new StringWriter();
+
                 marshaller.marshal(content, xml);
                 exchange.setRequestContent(new ByteArrayBuffer(xml.toString()));
             }
@@ -152,16 +124,22 @@ public class JettySyncRequestEngine {
             httpClient.send(exchange);
             exchange.waitForDone();
 
-            final Object response = unmarshaller.unmarshal(new StringReader(exchange.getResponseContent()));
+            JAXBContext receiveContext = JAXBContext.newInstance("com.nicohuysamen.fetchapp.dto");
+            Unmarshaller unmarshaller = receiveContext.createUnmarshaller();
+            Object response = unmarshaller.unmarshal(new StringReader(exchange.getResponseContent()));
 
-            if ((response instanceof Message && !klass.equals(Message.class))
-                    || response instanceof NilClasses) {
-
+            if ((response instanceof Message && !receiveClass.equals(Message.class))) {
                 // TODO: Log error
+                System.err.println(((Message) response).getMessage());
                 return null;
+            } else if (!response.getClass().equals(receiveClass)) {
+                // Try to recover -- Workaround for JAXB problem when loading package files.
+                receiveContext = JAXBContext.newInstance(receiveClass);
+                unmarshaller = receiveContext.createUnmarshaller();
+                response = unmarshaller.unmarshal(new StringReader(exchange.getResponseContent()));
             }
 
-            return (T) response;
+            return (R) response;
 
         } catch (final JAXBException e) {
             e.printStackTrace();

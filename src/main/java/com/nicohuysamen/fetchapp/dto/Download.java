@@ -21,6 +21,8 @@
 
 package com.nicohuysamen.fetchapp.dto;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.util.Date;
@@ -28,23 +30,23 @@ import java.util.Date;
 /**
  *
  */
-
 @XmlRootElement(name = "download")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Download {
 
     @XmlElement(name = "id")
-    private String id;
+    private int id;
 
     @XmlElement(name = "filename")
     private String filename;
 
-    @XmlElement(name = "product_sku")
+    @XmlElement(name = "product_sku", nillable = true)
     private String productSku;
 
-    @XmlElement(name = "order_id")
+    @XmlElement(name = "order_id", nillable = true)
     private String orderId;
 
-    @XmlElement(name = "order_item_id")
+    @XmlElement(name = "order_item_id", nillable = true)
     private String orderItemId;
 
     @XmlElement(name = "ip_address")
@@ -56,7 +58,7 @@ public class Download {
     @XmlElement(name = "size_bytes")
     private int sizeInBytes;
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 
@@ -70,6 +72,10 @@ public class Download {
 
     public String getOrderId() {
         return orderId;
+    }
+
+    public String getOrderItemId() {
+        return orderItemId;
     }
 
     public String getIpAddress() {
@@ -87,7 +93,7 @@ public class Download {
     @Override
     public String toString() {
         return "Download{" +
-                "id='" + id + '\'' +
+                "id=" + id +
                 ", filename='" + filename + '\'' +
                 ", productSku='" + productSku + '\'' +
                 ", orderId='" + orderId + '\'' +

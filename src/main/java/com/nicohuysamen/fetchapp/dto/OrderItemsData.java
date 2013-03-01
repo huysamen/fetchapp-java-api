@@ -1,5 +1,5 @@
 /*
-* NilClasses.java
+* OrderItemsData.java
 *
 * Copyright (c) 2013, Nicolaas Frederick Huysamen. All rights reserved.
 *
@@ -21,11 +21,32 @@
 
 package com.nicohuysamen.fetchapp.dto;
 
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
  */
+@XmlRootElement(name = "order_items")
+@XmlAccessorType(XmlAccessType.FIELD)
+public class OrderItemsData {
 
-@XmlRootElement(name = "nil-classes")
-public class NilClasses {}
+    @XmlAttribute
+    private static final String type = "array";
+
+    @XmlElement(name = "order_item")
+    private List<OrderItemData> orderItems;
+
+    public List<OrderItemData> getOrderItems() {
+        return orderItems;
+    }
+
+    protected void addOrderItem(final OrderItemData orderItem) {
+        if (orderItems == null) {
+            orderItems = new ArrayList<OrderItemData>();
+        }
+
+        orderItems.add(orderItem);
+    }
+}

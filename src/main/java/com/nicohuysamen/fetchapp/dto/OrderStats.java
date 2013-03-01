@@ -1,5 +1,5 @@
 /*
-* File.java
+* OrderStats.java
 *
 * Copyright (c) 2013, Nicolaas Frederick Huysamen. All rights reserved.
 *
@@ -29,69 +29,61 @@ import javax.xml.bind.annotation.XmlRootElement;
 /**
  *
  */
-@XmlRootElement(name = "file")
+@XmlRootElement(name = "order")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class File {
+public class OrderStats {
 
     @XmlElement(name = "id")
     private String id;
 
-    @XmlElement(name = "filename")
-    private String filename;
+    @XmlElement(name = "vendor_id")
+    private String vendorId;
 
-    @XmlElement(name = "size_bytes")
-    private int sizeInBytes;
+    @XmlElement(name = "download_count")
+    private int downloadCount;
 
-    @XmlElement(name = "content_type")
-    private String contentType;
+    @XmlElement(name = "product_count")
+    private int productCount;
 
-    @XmlElement(name = "permalink")
-    private String permalink;
+    @XmlElement(name = "total")
+    private float total;
 
-    @XmlElement(name = "url", nillable = true)
-    private String url;
-
-    @XmlElement(name = "type")
-    private String type;
+    @XmlElement(name = "currency")
+    private String currency;
 
     public String getId() {
         return id;
     }
 
-    public String getFilename() {
-        return filename;
+    public String getVendorId() {
+        return vendorId;
     }
 
-    public int getSizeInBytes() {
-        return sizeInBytes;
+    public int getDownloadCount() {
+        return downloadCount;
     }
 
-    public String getContentType() {
-        return contentType;
+    public int getProductCount() {
+        return productCount;
     }
 
-    public String getPermalink() {
-        return permalink;
+    public float getTotal() {
+        return total;
     }
 
-    public String getUrl() {
-        return url;
-    }
-
-    public String getType() {
-        return type;
+    public String getCurrency() {
+        return currency;
     }
 
     @Override
     public String toString() {
-        return "File{" +
+        return "OrderStats{" +
                 "id='" + id + '\'' +
-                ", filename='" + filename + '\'' +
-                ", sizeInBytes=" + sizeInBytes +
-                ", contentType='" + contentType + '\'' +
-                ", permalink='" + permalink + '\'' +
-                ", url='" + url + '\'' +
-                ", type='" + type + '\'' +
+                ", vendorId='" + vendorId + '\'' +
+                ", downloadCount=" + downloadCount +
+                ", productCount=" + productCount +
+                ", total=" + total +
+                ", currency='" + currency + '\'' +
                 '}';
     }
 }

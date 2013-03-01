@@ -1,5 +1,5 @@
 /*
-* Message.java
+* OrderItemFiles.java
 *
 * Copyright (c) 2013, Nicolaas Frederick Huysamen. All rights reserved.
 *
@@ -22,18 +22,23 @@
 package com.nicohuysamen.fetchapp.dto;
 
 import javax.xml.bind.annotation.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
  */
-@XmlRootElement(name = "message")
+@XmlRootElement(name = "files")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class Message {
+public class OrderItemFiles {
 
-    @XmlValue
-    private String message;
+    @XmlAttribute
+    private static final String type = "array";
 
-    public String getMessage() {
-        return message;
+    @XmlElement(name = "file")
+    private List<OrderItemFile> files = new ArrayList<OrderItemFile>();
+
+    public List<OrderItemFile> getFiles() {
+        return files;
     }
 }

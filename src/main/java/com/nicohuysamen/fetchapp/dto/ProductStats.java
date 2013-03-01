@@ -1,5 +1,5 @@
 /*
-* Product.java
+* ProductStats.java
 *
 * Copyright (c) 2013, Nicolaas Frederick Huysamen. All rights reserved.
 *
@@ -31,16 +31,13 @@ import java.util.List;
  */
 @XmlRootElement(name = "product")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class Product {
+public class ProductStats {
 
     @XmlElement(name = "id")
     private String id;
 
     @XmlElement(name = "sku")
     private String sku;
-
-    @XmlElement(name = "name")
-    private String name;
 
     @XmlElement(name = "price")
     private float price;
@@ -54,25 +51,6 @@ public class Product {
     @XmlElement(name = "download_count")
     private int downloadCount;
 
-    @XmlElement(name = "paypal_add_to_cart_link")
-    private String paypalAddToCartLink;
-
-    @XmlElement(name = "paypal_buy_now_link")
-    private String paypalBuyNowLink;
-
-    @XmlElement(name = "paypal_view_cart_link")
-    private String paypalViewCartLink;
-
-    @XmlElement(name = "created_at")
-    private Date createdAt;
-
-    @XmlElement(name = "files_uri")
-    private String filesUri;
-
-    @XmlElement(name = "downloads_uri")
-    private String downloadsUri;
-
-
     public String getId() {
         return id;
     }
@@ -81,24 +59,8 @@ public class Product {
         return sku;
     }
 
-    public void setSku(final String sku) {
-        this.sku = sku;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(final String name) {
-        this.name = name;
-    }
-
     public float getPrice() {
         return price;
-    }
-
-    public void setPrice(final float price) {
-        this.price = price;
     }
 
     public String getCurrency() {
@@ -113,46 +75,15 @@ public class Product {
         return downloadCount;
     }
 
-    public String getPaypalAddToCartLink() {
-        return paypalAddToCartLink;
-    }
-
-    public String getPaypalBuyNowLink() {
-        return paypalBuyNowLink;
-    }
-
-    public String getPaypalViewCartLink() {
-        return paypalViewCartLink;
-    }
-
-    public Date getCreatedAt() {
-        return createdAt;
-    }
-
-    public String getFilesUri() {
-        return filesUri;
-    }
-
-    public String getDownloadsUri() {
-        return downloadsUri;
-    }
-
     @Override
     public String toString() {
-        return "Product{" +
+        return "ProductStats{" +
                 "id='" + id + '\'' +
                 ", sku='" + sku + '\'' +
-                ", name='" + name + '\'' +
                 ", price=" + price +
                 ", currency='" + currency + '\'' +
                 ", orderCount=" + orderCount +
                 ", downloadCount=" + downloadCount +
-                ", paypalAddToCartLink='" + paypalAddToCartLink + '\'' +
-                ", paypalBuyNowLink='" + paypalBuyNowLink + '\'' +
-                ", paypalViewCartLink='" + paypalViewCartLink + '\'' +
-                ", createdAt=" + createdAt +
-                ", filesUri='" + filesUri + '\'' +
-                ", downloadsUri='" + downloadsUri + '\'' +
                 '}';
     }
 }

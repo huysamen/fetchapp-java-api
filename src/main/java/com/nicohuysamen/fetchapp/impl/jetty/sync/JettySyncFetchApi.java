@@ -24,16 +24,7 @@ package com.nicohuysamen.fetchapp.impl.jetty.sync;
 import com.nicohuysamen.fetchapp.FetchApi;
 import com.nicohuysamen.fetchapp.RequestConstants;
 import com.nicohuysamen.fetchapp.dto.*;
-import org.apache.commons.codec.binary.Base64;
-import org.eclipse.jetty.client.ContentExchange;
-import org.eclipse.jetty.client.HttpClient;
-import org.eclipse.jetty.util.thread.QueuedThreadPool;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
-import java.io.IOException;
-import java.io.StringReader;
 import java.util.Date;
 
 /**
@@ -47,15 +38,13 @@ public class JettySyncFetchApi implements FetchApi {
     private String authKey;
 
     public JettySyncFetchApi(
-            final String appKey,
             final String apiKey,
             final String apiToken) throws Exception {
 
-        this(appKey, apiKey, apiToken, 10, 100, 5000);
+        this(apiKey, apiToken, 10, 100, 10000);
     }
 
     public JettySyncFetchApi(
-            final String appKey,
             final String apiKey,
             final String apiToken,
             final int maxConnectionsPerAddress,
@@ -66,7 +55,6 @@ public class JettySyncFetchApi implements FetchApi {
         this.authKey = RequestConstants.generateAuthorizationKey(apiKey, apiToken);
         this.engine = new JettySyncRequestEngine(
                 authKey,
-                appKey,
                 maxConnectionsPerAddress,
                 connectionQueueSize,
                 connectionTimeout);
@@ -83,15 +71,33 @@ public class JettySyncFetchApi implements FetchApi {
     }
 
     @Override
-    public synchronized String newApiToken() {
+    public synchronized Message requestNewApiToken() {
         final Message message = engine.sendGetRequest(Message.class, RequestConstants.Account.METHOD_NEW_TOKEN);
 
         if (message != null) {
             authKey = RequestConstants.generateAuthorizationKey(apiKey, message.getMessage());
-            return message.getMessage();
         }
 
-        return null;
+        return message;
+    }
+
+
+    // -----------------------------------------------------------------------------------------------------------------
+    // FILE MANAGEMENT
+    // -----------------------------------------------------------------------------------------------------------------
+
+    @Override
+    public Files getFiles() {
+        return engine.sendGetRequest(Files.class, RequestConstants.Files.METHOD_FILES);
+    }
+
+
+    // -----------------------------------------------------------------------------------------------------------------
+    // DOWNLOAD MANAGEMENT
+    // -----------------------------------------------------------------------------------------------------------------
+    @Override
+    public Downloads getDownloads() {
+        return engine.sendGetRequest(Downloads.class, RequestConstants.Downloads.METHOD_DOWNLOADS);
     }
 
 
@@ -121,13 +127,13 @@ public class JettySyncFetchApi implements FetchApi {
     }
 
     @Override
-    public Order createOrder(final Order order) {
-        return engine.sendPostRequest(Order.class, RequestConstants.Orders.METHOD_ORDER_CREATE, order);
+    public Order createOrder(final OrderData order) {
+        return engine.sendPostRequest(OrderData.class, Order.class, RequestConstants.Orders.METHOD_ORDER_CREATE, order);
     }
 
     @Override
-    public Order updateOrder(final Order order) {
-        return engine.sendPutRequest(Order.class, RequestConstants.Orders.orderUpdateRequestUrl(order.getId()), order);
+    public Order updateOrder(final OrderData order) {
+        return engine.sendPutRequest(OrderData.class, Order.class, RequestConstants.Orders.orderUpdateRequestUrl(order.getId()), order);
     }
 
     @Override
@@ -136,7 +142,7 @@ public class JettySyncFetchApi implements FetchApi {
     }
 
     @Override
-    public Downloads orderDownloads(final String id) {
+    public Downloads getOrderDownloads(final String id) {
         return engine.sendGetRequest(Downloads.class, RequestConstants.Orders.orderDownloadsRequestUrl(id));
     }
 
@@ -148,6 +154,7 @@ public class JettySyncFetchApi implements FetchApi {
     @Override
     public Message sendOrderEmail(final String id, final boolean resetExpiration) {
         return engine.sendPostRequest(
+                Void.class,
                 Message.class,
                 RequestConstants.Orders.orderSendEmailRequestUrl(id, resetExpiration),
                 null);
@@ -156,14 +163,15 @@ public class JettySyncFetchApi implements FetchApi {
     @Override
     public Message sendOrderEmail(final String id, final Date expirationDate) {
         return engine.sendPostRequest(
+                Void.class,
                 Message.class,
                 RequestConstants.Orders.orderSendEmailRequestUrl(id, expirationDate),
                 null);
     }
 
     @Override
-    public Order getOrderStatistics(final String id) {
-        return engine.sendGetRequest(Order.class, RequestConstants.Orders.orderStatsRequestUrl(id));
+    public OrderStats getOrderStatistics(final String id) {
+        return engine.sendGetRequest(OrderStats.class, RequestConstants.Orders.orderStatsRequestUrl(id));
     }
 
 
@@ -182,8 +190,8 @@ public class JettySyncFetchApi implements FetchApi {
     }
 
     @Override
-    public Files getOrderItemFiles(final String orderId, final String id) {
-        return engine.sendGetRequest(Files.class, RequestConstants.OrderItems.orderItemFilesRequestUrl(orderId, id));
+    public OrderItemFiles getOrderItemFiles(final String orderId, final String id) {
+        return engine.sendGetRequest(OrderItemFiles.class, RequestConstants.OrderItems.orderItemFilesRequestUrl(orderId, id));
     }
 
     @Override
@@ -213,13 +221,13 @@ public class JettySyncFetchApi implements FetchApi {
     }
 
     @Override
-    public Product createProduct(final Product product) {
-        return engine.sendPostRequest(Product.class, RequestConstants.Products.METHOD_PRODUCT_CREATE, product);
+    public Product createProduct(final ProductData product) {
+        return engine.sendPostRequest(ProductData.class, Product.class, RequestConstants.Products.METHOD_PRODUCT_CREATE, product);
     }
 
     @Override
-    public Product updateProduct(final Product product) {
-        return engine.sendPutRequest(Product.class, RequestConstants.Products.productUpdateRequestUrl(product.getSku()), product);
+    public Product updateProduct(final ProductData product) {
+        return engine.sendPutRequest(ProductData.class, Product.class, RequestConstants.Products.productUpdateRequestUrl(product.getSku()), product);
     }
 
     @Override
@@ -228,8 +236,8 @@ public class JettySyncFetchApi implements FetchApi {
     }
 
     @Override
-    public Product getProductStatistics(final String sku) {
-        return engine.sendGetRequest(Product.class, RequestConstants.Products.productStatisticsRequestUrl(sku));
+    public ProductStats getProductStatistics(final String sku) {
+        return engine.sendGetRequest(ProductStats.class, RequestConstants.Products.productStatisticsRequestUrl(sku));
     }
 
     @Override
