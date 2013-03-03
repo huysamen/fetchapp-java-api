@@ -28,6 +28,8 @@ import com.nicohuysamen.fetchapp.dto.Message;
 import com.nicohuysamen.fetchapp.impl.jetty.AbstractJettyRequestEngine;
 import org.eclipse.jetty.client.ContentExchange;
 import org.eclipse.jetty.io.ByteArrayBuffer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -41,6 +43,8 @@ import java.io.StringWriter;
  *
  */
 class JettyAsyncRequestEngine extends AbstractJettyRequestEngine {
+
+    private static final Logger LOG = LoggerFactory.getLogger(JettyAsyncRequestEngine.class);
 
     protected JettyAsyncRequestEngine(
             final String authKey,
@@ -102,11 +106,12 @@ class JettyAsyncRequestEngine extends AbstractJettyRequestEngine {
                         Object response = unmarshaller.unmarshal(new StringReader(getResponseContent()));
 
                         if ((response instanceof Message && !receiveClass.equals(Message.class))) {
-                            // TODO: Log error
+                            LOG.warn("Received {}, expected {} - {}", Message.class, receiveClass, ((Message) response).getMessage());
                             System.err.println(((Message) response).getMessage());
                             future.set(null);
                             return;
                         } else if (!response.getClass().equals(receiveClass)) {
+                            LOG.debug("Received {}, expected {} - This is expected, trying to recover.", response.getClass(), receiveClass);
                             receiveContext = JAXBContext.newInstance(receiveClass);
                             unmarshaller = receiveContext.createUnmarshaller();
                             response = unmarshaller.unmarshal(new StringReader(getResponseContent()));

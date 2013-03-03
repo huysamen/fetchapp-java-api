@@ -28,6 +28,8 @@ import org.eclipse.jetty.client.ContentExchange;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.io.ByteArrayBuffer;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -41,6 +43,8 @@ import java.io.StringWriter;
  *
  */
 class JettySyncRequestEngine extends AbstractJettyRequestEngine {
+
+    private static final Logger LOG = LoggerFactory.getLogger(JettySyncRequestEngine.class);
 
     protected JettySyncRequestEngine(
             final String authKey,
@@ -116,11 +120,10 @@ class JettySyncRequestEngine extends AbstractJettyRequestEngine {
             Object response = unmarshaller.unmarshal(new StringReader(exchange.getResponseContent()));
 
             if ((response instanceof Message && !receiveClass.equals(Message.class))) {
-                // TODO: Log error
-                System.err.println(((Message) response).getMessage());
+                LOG.warn("Received {}, expected {} - {}", Message.class, receiveClass, ((Message) response).getMessage());
                 return null;
             } else if (!response.getClass().equals(receiveClass)) {
-                // Try to recover -- Workaround for JAXB problem when loading package files.
+                LOG.debug("Received {}, expected {} - This is expected, trying to recover.", response.getClass(), receiveClass);
                 receiveContext = JAXBContext.newInstance(receiveClass);
                 unmarshaller = receiveContext.createUnmarshaller();
                 response = unmarshaller.unmarshal(new StringReader(exchange.getResponseContent()));
